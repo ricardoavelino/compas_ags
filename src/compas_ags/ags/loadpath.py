@@ -316,16 +316,6 @@ def optimise_loadpath(form, force, algo='COBYLA'):
         # print(lp)
         return(lp)
 
-    # def constraint(_x):
-    #     _xy[_free, 0] = _x
-
-    #     update_form_from_force(xy, _xy, free, leaves, i_j, ij_e, _C)
-
-    #     form.
-
-    #     # print(lp)
-    #     return(lp)
-
     x0 = _xy[_free, 0]
 
     result = minimize(objfunc, x0, method=algo, tol=1e-12, options={'maxiter': 1000})  # noqa: F841
