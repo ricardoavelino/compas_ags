@@ -8,6 +8,7 @@ from compas.geometry import subtract_vectors
 
 __all__ = [
     'check_deviations',
+    'compute_max_deviation'
 ]
 
 
@@ -46,3 +47,27 @@ def check_deviations(form, force, tol=10e-3):
         form.edge_attribute(edges_form[i], 'a', a)
 
     return checked
+
+
+def compute_max_deviation(form, force, tol=10e-3):
+    """Checks whether the form and force diagrams are indeed reciprocal, i.e. have their corresponding edges parallel.
+
+    Parameters
+    ----------
+    form: compas_ags.diagrams.FormDiagram
+        The form diagram to check deviations.
+    force: compas_ags.diagrams.ForceDiagram
+        The force diagram to check deviations.
+    tol: float (10e-3)
+        The tolerance allowd for the deviations.
+
+    Returns
+    -------
+    checked : bool
+        Return whether of not the diagram passes the check with no deviations greater than the tolerance.
+
+    """
+
+    check_deviations(form, force, tol=10e-3)
+
+    return max(form.edges_attributes('a'))
