@@ -65,7 +65,12 @@ edges = [
     (2, 15),
     (3, 16),
     (4, 17),
-    (5, 18)
+    (5, 18),
+
+    (14, 2), # diagonals
+    (15, 3),
+    (3, 17),
+    (4, 18)
     ]
 
 graph = FormGraph.from_nodes_and_edges(nodes, edges)
@@ -116,16 +121,17 @@ force.vertex_attributes(4, 'xy', [0, -0.5])
 force.vertex_attributes(5, 'xy', [0, -1.5])
 force.vertex_attributes(6, 'xy', [0, -2.5])
 
-force.vertex_attributes(12, 'xy', [-2, 2.5])
-force.vertex_attributes(11, 'xy', [-2, 1.5])
-force.vertex_attributes(10, 'xy', [-2, 0.5])
+force.vertex_attributes(16, 'xy', [-2, 2.5])
+force.vertex_attributes(14, 'xy', [-2, 1.5])
+force.vertex_attributes(11, 'xy', [-2, 0.5])
 force.vertex_attributes(9, 'xy', [-2, -0.5])
 force.vertex_attributes(8, 'xy', [-2, -1.5])
 force.vertex_attributes(7, 'xy', [-2, -2.5])
 
-# modify force in the truss by updating vertex coordinates of the force diagram
-# force in members of the top chord and bottom chord are set to be the same
-# now the form is no longer in equilibrium
+force.vertex_attributes(15, 'xy', force.vertex_attributes(14, 'xy'))
+force.vertex_attributes(13, 'xy', force.vertex_attributes(11, 'xy'))
+force.vertex_attributes(12, 'xy', force.vertex_attributes(9, 'xy'))
+force.vertex_attributes(10, 'xy', force.vertex_attributes(8, 'xy'))
 
 # forces in members of top chord and connecting struts are force domain parameters
 force.vertices_attribute('is_param', True, keys=[7, 8, 9, 10, 11, 12])

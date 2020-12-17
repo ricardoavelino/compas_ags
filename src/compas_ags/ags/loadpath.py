@@ -16,6 +16,7 @@ from compas_ags.diagrams import FormDiagram
 from compas_ags.diagrams import ForceDiagram
 
 from compas_ags.ags.core import update_form_from_force
+from compas_ags.utilities import compute_max_deviation
 
 
 __all__ = [
@@ -312,12 +313,24 @@ def optimise_loadpath(form, force, algo='COBYLA'):
         force = normrow(_C.dot(_xy))
         lp = length[internal].T.dot(force[internal])[0, 0]
 
-        print(lp)
+        # print(lp)
         return(lp)
+
+    # def constraint(_x):
+    #     _xy[_free, 0] = _x
+
+    #     update_form_from_force(xy, _xy, free, leaves, i_j, ij_e, _C)
+
+    #     form.
+
+    #     # print(lp)
+    #     return(lp)
 
     x0 = _xy[_free, 0]
 
     result = minimize(objfunc, x0, method=algo, tol=1e-12, options={'maxiter': 1000})  # noqa: F841
+    print(result)
+    print('Max angle deviation:', compute_max_deviation(form, force))
 
     uv = C.dot(xy)
     _uv = _C.dot(_xy)
