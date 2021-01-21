@@ -133,6 +133,9 @@ force.vertices_attribute('is_param', True, keys=[7, 8, 9, 10, 11, 12])
 # fix boundary vertices, the nodes of the bottom chord
 form.vertices_attribute('is_fixed', True, keys=[0, 1, 2, 3, 4, 5, 6])
 
+# partial fix
+# form.vertices_attribute('fix_x', True, keys=[14, 15, 16, 17, 18])  # Upper chord
+
 graphstatics.form_update_from_force(form, force)
 
 viewer = Viewer(form, force, delay_setup=False, figsize=(12, 7.5))

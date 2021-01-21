@@ -136,8 +136,15 @@ force.vertex_attributes(10, 'xy', force.vertex_attributes(8, 'xy'))
 # forces in members of top chord and connecting struts are force domain parameters
 force.vertices_attribute('is_param', True, keys=[7, 8, 9, 10, 11, 12])
 
+# # fix boundary vertices, the nodes of the bottom chord
+form.vertices_attribute('is_fixed', True, keys=[0, 6])
+
 # fix boundary vertices, the nodes of the bottom chord
-form.vertices_attribute('is_fixed', True, keys=[0, 1, 2, 3, 4, 5, 6])
+# form.vertices_attribute('fix_x', True, keys=[14, 15, 16, 17, 18])  # Upper chord
+form.vertices_attribute('fix_x', True, keys=[1, 2, 3, 4, 5])  # Bottom chord
+
+# fix boundary vertices, the nodes of the bottom chord
+form.vertices_attribute('fix_y', True, keys=[1, 2, 3, 4, 5])  # Bottom chord
 
 graphstatics.form_update_from_force(form, force)
 

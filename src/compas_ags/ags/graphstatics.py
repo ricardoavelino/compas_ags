@@ -247,7 +247,7 @@ def form_update_from_force(form, force, kmax=100):
 
     Notes
     -----
-    Compute the geometry of the form diagram from the geometry of the form diagram
+    Compute the geometry of the form diagram from the geometry of the force diagram
     and some constraints (location of fixed points).
     Since both diagrams are reciprocal, the coordinates of each vertex of the form
     diagram can be expressed as the intersection of three or more lines parallel
@@ -275,6 +275,8 @@ def form_update_from_force(form, force, kmax=100):
     i_j = {index: [vertex_index[nbr] for nbr in form.vertex_neighbors(vertex)] for index, vertex in enumerate(form.vertices())}
     ij_e = {(vertex_index[u], vertex_index[v]): edge_index[u, v] for u, v in edge_index}
     ij_e.update({(vertex_index[v], vertex_index[u]): edge_index[u, v] for u, v in edge_index})
+    fix_x = list(form.vertices_where({'fix_x': True}))
+    fix_y = list(form.vertices_where({'fix_y': True}))
 
     xy = array(form.xy(), dtype=float64)
     edges = [(vertex_index[u], vertex_index[v]) for u, v in form.edges()]
@@ -301,7 +303,7 @@ def form_update_from_force(form, force, kmax=100):
     # as a function of the fixed vertices and the previous coordinates of the *free* vertices
     # re-add the leaves and leaf-edges
     # --------------------------------------------------------------------------
-    update_form_from_force(xy, _xy, free, leaves, i_j, ij_e, _C, kmax=kmax)
+    update_form_from_force(xy, _xy, free, leaves, i_j, ij_e, _C, kmax=kmax, fix_x=fix_x, fix_y=fix_y)
     # --------------------------------------------------------------------------
     # update
     # --------------------------------------------------------------------------

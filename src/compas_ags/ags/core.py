@@ -70,7 +70,7 @@ def update_q_from_qind(E, q, dep, ind):
     q[dep] = qd
 
 
-def update_form_from_force(xy, _xy, free, leaves, i_nbrs, ij_e, _C, kmax=100):
+def update_form_from_force(xy, _xy, free, leaves, i_nbrs, ij_e, _C, kmax=100, fix_x=None, fix_y=None):
     r"""Update the coordinates of a form diagram using the coordinates of the corresponding force diagram.
 
     Parameters
@@ -137,6 +137,10 @@ def update_form_from_force(xy, _xy, free, leaves, i_nbrs, ij_e, _C, kmax=100):
     --------
     >>>
     """
+    free_x = []
+    free_y = []
+    cull_x = [False]*len(free)
+    cull_y = [False]*len(free)
     _uv = _C.dot(_xy)
     _t = normalizerow(_uv)
     I = eye(2, dtype=float64)  # noqa: E741
@@ -147,6 +151,8 @@ def update_form_from_force(xy, _xy, free, leaves, i_nbrs, ij_e, _C, kmax=100):
     # update the free vertices
     for k in range(kmax):
         row = 0
+        free_x = []
+        free_y = []
 
         # in order for the two diagrams to have parallel corresponding edges,
         # each free vertex location of the form diagram is computed as the intersection
@@ -177,6 +183,14 @@ def update_form_from_force(xy, _xy, free, leaves, i_nbrs, ij_e, _C, kmax=100):
 
             A[row: row + 2, row: row + 2] = R
             b[row: row + 2] = q
+
+            if i not in fix_x:
+                cull_x[int(row/2)] = True
+                free_x.append(i)
+            if i not in fix_y:
+                cull_y[int(row/2)] = True
+                free_y.append(i)
+
             row += 2
 
             # p = solve(R.T.dot(R), R.T.dot(q))
@@ -185,7 +199,12 @@ def update_form_from_force(xy, _xy, free, leaves, i_nbrs, ij_e, _C, kmax=100):
         # res = solve(A.T.dot(A), A.T.dot(b))
         # xy[free] = res.reshape((-1, 2), order='C')
         res = lstsq(A, b)
-        xy[free] = res[0].reshape((-1, 2), order='C')
+        # xy[free] = res[0].reshape((-1, 2), order='C')
+        # print(free_x)
+        # print(free_y)
+        # print(res[0].shape)
+        xy[free_x, 0] = res[0].reshape(-1, 2, order='C')[cull_x, 0]
+        xy[free_y, 1] = res[0].reshape(-1, 2, order='C')[cull_y, 1]
 
     # reconnect leaves
     for i in leaves:

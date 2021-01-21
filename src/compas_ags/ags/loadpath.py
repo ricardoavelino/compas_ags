@@ -304,10 +304,16 @@ def optimise_loadpath(form, force, algo='COBYLA'):
     _free = [key for key, attr in force.vertices(True) if attr['is_param']]
     _free = [_vertex_index[key] for key in _free]
 
-    def objfunc(_x):
-        _xy[_free, 0] = _x
+    fix_x = list(form.vertices_where({'fix_x': True}))
+    fix_x = [vertex_index[key] for key in fix_x]
+    fix_y = list(form.vertices_where({'fix_y': True}))
+    fix_y = [vertex_index[key] for key in fix_y]
 
-        update_form_from_force(xy, _xy, free, leaves, i_j, ij_e, _C)
+    def objfunc(_x):
+        # _xy[_free, 0] = _x
+        _xy[_free] = _x.reshape(-1, 2, order='C')
+
+        update_form_from_force(xy, _xy, free, leaves, i_j, ij_e, _C, fix_x=fix_x, fix_y=fix_y)
 
         length = normrow(C.dot(xy))
         force = normrow(_C.dot(_xy))
@@ -316,7 +322,8 @@ def optimise_loadpath(form, force, algo='COBYLA'):
         # print(lp)
         return(lp)
 
-    x0 = _xy[_free, 0]
+    # x0 = _xy[_free, 0]
+    x0 = _xy[_free].flatten()
 
     result = minimize(objfunc, x0, method=algo, tol=1e-12, options={'maxiter': 1000})  # noqa: F841
     print(result)
