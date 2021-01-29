@@ -16,8 +16,8 @@ from compas_ags.diagrams import ForceDiagram
 from compas_ags.viewers import Viewer
 from compas_ags.ags import graphstatics
 
-import compas_ags.ags2.rootfinding as rf
-from compas_ags.ags2.constraints import ConstraintsCollection, HorizontalFix
+import compas_ags.ags._rootfinding as rf
+from compas_ags.ags._constraints import ConstraintsCollection, HorizontalFix
 
 
 # ------------------------------------------------------------------------------
@@ -36,16 +36,17 @@ left  = list(form.vertices_where({'x': 0.0, 'y': 0.0}))[0]
 right = list(form.vertices_where({'x': 6.0, 'y': 0.0}))[0]
 fixed = [left, right]
 
-form.set_fixed(fixed)
-force.set_anchor([5])
-
+for key in fixed:
+    form.vertex_attribute(key, 'is_fixed', True)
+form.vertex_attribute(key, 'is_anchor', True)
 
 # ------------------------------------------------------------------------------
 #   3. set applied load
 # ------------------------------------------------------------------------------
 e1 ={'v': list(form.vertices_where({'x': 3.0, 'y': 3.0}))[0],
      'u': list(form.vertices_where({'x': 3.669563106796117, 'y': 5.008689320388349}))[0]}
-form.set_edge_forcedensity(e1['v'], e1['u'], -1.0)
+form.edge_attribute((e1['v'], e1['u']), 'q', -1.0)
+form.edge_attribute((e1['v'], e1['u']), 'is_ind', True)
 
 # update the diagrams
 graphstatics.form_update_q_from_qind(form)
@@ -67,8 +68,8 @@ C.add_constraint(HorizontalFix(form, right))
 C.constrain_dependent_leaf_edges_lengths()
 constraint_lines = C.get_lines()
 
-# compute the amount of nullspace modes 
-# which means the amount of independent solutions of form diagrams 
+# compute the amount of nullspace modes
+# which means the amount of independent solutions of form diagrams
 ns = rf.compute_nullspace(form, force, C)
 print("Dimension of nullspace: " + str(len(ns)))
 
@@ -94,7 +95,7 @@ def show(i):
 
 
     form_lines = form_lines + constraint_lines
-    
+
     # display the original configuration
     # and the configuration after modifying the force diagram
     viewer = Viewer(form, force, delay_setup=False)

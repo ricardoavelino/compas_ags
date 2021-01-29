@@ -20,8 +20,8 @@ from compas_ags.diagrams import ForceDiagram
 from compas_ags.viewers import Viewer
 from compas_ags.ags import graphstatics
 
-from compas_ags.ags2.constraints import ConstraintsCollection, HorizontalFix, VerticalFix
-import compas_ags.ags2.rootfinding as rf
+from compas_ags.ags._constraints import ConstraintsCollection, HorizontalFix, VerticalFix
+import compas_ags.ags._rootfinding as rf
 
 # ------------------------------------------------------------------------------
 #   1. create a simple arch from nodes and edges, make form and force diagrams
@@ -122,7 +122,7 @@ for u, v in force.edges():
 # --------------------------------------------------------------------------
 # set constraints
 # find vertices 0,8,9 in the force diagram and move them further to the right
-# past the externally applied loads, which flips the arch upside-down into a 
+# past the externally applied loads, which flips the arch upside-down into a
 # cable in tension
 _xy = np.array(force.xy(), dtype=np.float64).reshape((-1, 2))
 _x_min = min(_xy[:,0])

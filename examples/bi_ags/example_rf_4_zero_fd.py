@@ -15,15 +15,15 @@ from __future__ import division
 import numpy as np
 
 import compas_ags
-import compas_ags.utilities.errorhandler as eh
+import compas_ags.exceptions.errorhandler as eh
 from compas_ags.diagrams import FormGraph
 from compas_ags.diagrams import FormDiagram
 from compas_ags.diagrams import ForceDiagram
 from compas_ags.viewers import Viewer
 from compas_ags.ags import graphstatics
 
-import compas_ags.ags2.rootfinding as rf
-from compas_ags.ags2.graphstatics import form_update_from_force_direct
+import compas_ags.ags._rootfinding as rf
+from compas_ags.ags._graphstatics import form_update_from_force_direct
 
 
 # ------------------------------------------------------------------------------

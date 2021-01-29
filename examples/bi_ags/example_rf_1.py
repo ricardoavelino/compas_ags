@@ -79,20 +79,21 @@ for u, v in force.edges():
 # --------------------------------------------------------------------------
 #   4. force diagram manipulation and modify the form diagram
 # --------------------------------------------------------------------------
+import compas_ags.ags._rootfinding as rf
+import numpy as np
 direct = False
+translation = 0.5
 if direct:
     # example reference: COMPAS_AGS\examples\rtl.py
     # modify the geometry of the force diagram
-    force.vertex[4]['x'] -= 0.5
+    force.vertex[4]['x'] -= translation
     # update the form diagram
     graphstatics.form_update_from_force(form, force, kmax=100)
 else:
-    import compas_ags.ags._rootfinding as rf
-    import numpy as np
     # modify the geometry of the force diagram and update the form diagram using Newton's method
     xy = np.array(form.xy(), dtype=np.float64).reshape((-1, 2))
     _xy = np.array(force.xy(), dtype=np.float64).reshape((-1, 2))
-    _xy[force.key_index()[4], 0] -= 0.5
+    _xy[force.key_index()[4], 0] -= translation
     _X_goal = np.vstack((np.asmatrix(_xy[:, 0]).transpose(), np.asmatrix(_xy[:, 1]).transpose()))
     # note that no constraint is defined, thus shift may happen of the form diagram
     rf.compute_form_from_force_newton(form, force, _X_goal, constraints=None)

@@ -37,21 +37,11 @@ __all__ = [
     'compute_jacobian',
     'get_red_residual_and_jacobian',
     'compute_form_from_force_newton',
-    # 'just_return_index_2_coord',
 
     'compute_jacobian_proxy',
     'get_red_residual_and_jacobian_proxy',
     'compute_form_from_force_newton_proxy',
 ]
-
-
-# def just_return_index_2_coord(formdata, forcedata):
-#     from compas_ags.diagrams import FormDiagram
-#     from compas_ags.diagrams import ForceDiagram
-#     form = FormDiagram.from_data(formdata)
-#     i_k = form.index_key()
-#     coord = form.vertex_coordinates(i_k[1])
-#     return coord
 
 
 def compute_form_from_force_newton_rpc(formdata, forcedata, tol=1e5):
@@ -111,8 +101,6 @@ def compute_form_from_force_newton_xfunc(formdata, forcedata, xy_dict, tol=1e5, 
     form = FormDiagram.from_data(formdata)
     force = ForceDiagram.from_data(forcedata)
     i_k = form.index_key()
-    print('this is the coordinate of the vertex that will be fixed in reality:')
-    print(form.vertex_coordinates(i_k[1]))
 
     xy = array(form.xy(), dtype=float64).reshape((-1, 2))
     X = np.vstack((np.asmatrix(xy[:, 0]).transpose(), np.asmatrix(xy[:, 1]).transpose()))
@@ -274,10 +262,6 @@ def get_red_residual_and_jacobian(form, force, _X_goal, constraints=None):
 
     jacobian = compute_jacobian(form, force)
 
-    print('Jacobian:', jacobian)
-    print('Jacobian-shape:', jacobian.shape)
-    print('Jacobian-rank:', np.linalg.matrix_rank(jacobian))
-
     _vcount = force.number_of_vertices()
     _k_i = force.key_index()
     _known = _k_i[force.anchor()]
@@ -289,15 +273,6 @@ def get_red_residual_and_jacobian(form, force, _X_goal, constraints=None):
         (cj, cr) = constraints.compute_constraints()
         jacobian = np.vstack((jacobian, cj))
         r = np.vstack((r, cr))
-        print('Cj:', cj)
-        print('Cr:', cr)
-        print('Jacobian-after:', jacobian)
-        print('Jacobian-shape-after:', jacobian.shape)
-        print('Jacobian-rank-after:', np.linalg.matrix_rank(jacobian))
-
-    print('r:', r)
-    print('r-shape:', r.shape)
-    print('r-rank:', np.linalg.matrix_rank(r))
 
     check_solutions(jacobian, r)
 
@@ -364,7 +339,6 @@ def compute_jacobian(form, force):
     Q = np.diag(np.asmatrix(q).getA1())
     Q = np.asmatrix(Q)
 
-    # independent_edges = list(form.edges_where({'is_ind': True}))
     independent_edges = [(k_i[u], k_i[v]) for (u, v) in list(form.edges_where({'is_ind': True}))]
     independent_edges_idx = [edges.index(i) for i in independent_edges]
     dependent_edges_idx = list(set(range(ecount)) - set(independent_edges_idx))
@@ -372,10 +346,6 @@ def compute_jacobian(form, force):
     Ed = E[:, dependent_edges_idx]
     Eid = E[:, independent_edges_idx]
     qid = q[independent_edges_idx]
-
-    print('Ed - rank:', np.linalg.matrix_rank(Ed))
-    print('Eid - rank:', np.linalg.matrix_rank(Eid))
-    print('free:', len(free))
 
     # --------------------------------------------------------------------------
     # force diagram
@@ -388,8 +358,6 @@ def compute_jacobian(form, force):
     _Ct = np.asmatrix(_Ct)
     _k_i   = force.key_index()
     _known = [_k_i[force.anchor()]]
-
-    print('Force Anchor:', force.anchor())
 
     # --------------------------------------------------------------------------
     # Jacobian
@@ -590,10 +558,5 @@ def _comp_perturbed_force_coordinates_from_form(form, force, X):
     _update_coordinates(force, _xyo)
 
     return _X
-
-
-
-
-
 
 

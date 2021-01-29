@@ -19,8 +19,8 @@ from compas_ags.diagrams import ForceDiagram
 from compas_ags.viewers import Viewer
 from compas_ags.ags import graphstatics
 
-from compas_ags.ags2.constraints import ConstraintsCollection, HorizontalFix, VerticalFix
-import compas_ags.ags2.rootfinding as rf
+from compas_ags.ags._constraints import ConstraintsCollection, HorizontalFix, VerticalFix
+import compas_ags.ags._rootfinding as rf
 
 # ------------------------------------------------------------------------------
 #   1. create a simple arch from nodes and edges, make form and force diagrams
@@ -87,8 +87,9 @@ for index in edges_ind:
 left  = list(form.vertices_where({'x': 0.0, 'y': 0.0}))[0]
 right = list(form.vertices_where({'x': 43.4972961014, 'y': 0.0}))[0]
 fixed = [left, right]
-form.set_fixed(fixed)
-force.set_anchor([5])
+
+for key in fixed:
+    form.vertex_attribute(key, 'is_fixed', True)
 
 # update the diagrams
 graphstatics.form_update_q_from_qind(form)

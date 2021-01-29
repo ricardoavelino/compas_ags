@@ -16,7 +16,7 @@ from scipy.linalg import lstsq
 
 from scipy.sparse import diags
 
-from compas_ags.utilities.errorhandler import SolutionError
+from compas_ags.exceptions.errorhandler import SolutionError
 from compas_ags.utilities.helpers import get_independent_stress, check_solutions
 
 from compas_ags.ags.graphstatics import *

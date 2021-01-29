@@ -20,8 +20,8 @@ from compas_ags.diagrams import ForceDiagram
 from compas_ags.viewers import Viewer
 from compas_ags.ags import graphstatics
 
-import compas_ags.ags2.rootfinding as rf
-from compas_ags.ags2.constraints import ConstraintsCollection, HorizontalFix, VerticalFix
+import compas_ags.ags._rootfinding as rf
+from compas_ags.ags._constraints import ConstraintsCollection, HorizontalFix, VerticalFix
 
 
 # ------------------------------------------------------------------------------
@@ -39,8 +39,9 @@ left  = list(form.vertices_where({'x': 0.0, 'y': 0.0}))[0]
 right = list(form.vertices_where({'x': 6.0, 'y': 0.0}))[0]
 fixed = [left, right]
 
-form.set_fixed(fixed)
-force.set_anchor([5])
+for key in fixed:
+    form.vertex_attribute(key, 'is_fixed', True)
+form.vertex_attribute(key, 'is_anchor', True)
 
 # ------------------------------------------------------------------------------
 #   3. set applied load
@@ -48,7 +49,9 @@ force.set_anchor([5])
 # set the magnitude of the applied load
 e1 ={'v': list(form.vertices_where({'x': 3.0, 'y': 3.0}))[0],
      'u': list(form.vertices_where({'x': 3.669563106796117, 'y': 5.008689320388349}))[0]}
-form.set_edge_forcedensity(e1['v'], e1['u'], -1.0)
+# form.set_edge_forcedensity(e1['v'], e1['u'], -1.0)
+form.edge_attribute((e1['v'], e1['u']), 'q', -1.0)
+form.edge_attribute((e1['v'], e1['u']), 'is_ind', True)
 
 # update the diagrams
 graphstatics.form_update_q_from_qind(form)
