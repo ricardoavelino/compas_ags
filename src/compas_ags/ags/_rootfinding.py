@@ -23,7 +23,7 @@ from compas.numerical import equilibrium_matrix
 from compas.numerical import laplacian_matrix
 from compas.numerical import solve_with_known
 
-from compas_ags.utilities.errorhandler import SolutionError
+from compas_ags.exceptions.errorhandler import SolutionError
 from compas_ags.utilities.helpers import check_solutions
 from compas_ags.ags.graphstatics import form_update_q_from_qind, force_update_from_form
 
@@ -371,6 +371,8 @@ def compute_jacobian(form, force):
     _Ct = np.asmatrix(_Ct)
     _k_i   = force.key_index()
     _known = [_k_i[force.anchor()]]
+
+    print('Force Anchor:', force.anchor())
 
     # --------------------------------------------------------------------------
     # Jacobian

@@ -43,7 +43,9 @@ force.set_anchor([5])
 # set the magnitude of the applied load
 e1 =  {'v': list(form.vertices_where({'x': 3.0, 'y': 3.0}))[0],
        'u': list(form.vertices_where({'x': 3.669563106796117, 'y': 5.008689320388349}))[0]}
-form.set_edge_forcedensity(e1['v'], e1['u'], -1.0)
+# form.set_edge_forcedensity(e1['v'], e1['u'], -1.0)
+form.edge_attribute((e1['v'], e1['u']), 'q', -1.0)
+form.edge_attribute((e1['v'], e1['u']), 'is_ind', True)
 
 # update the diagrams
 graphstatics.form_update_q_from_qind(form)
@@ -85,7 +87,7 @@ if direct:
     # update the form diagram
     graphstatics.form_update_from_force(form, force, kmax=100)
 else:
-    import compas_ags.ags2.rootfinding as rf
+    import compas_ags.ags._rootfinding as rf
     import numpy as np
     # modify the geometry of the force diagram and update the form diagram using Newton's method
     xy = np.array(form.xy(), dtype=np.float64).reshape((-1, 2))
