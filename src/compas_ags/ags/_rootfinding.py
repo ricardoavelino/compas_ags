@@ -274,6 +274,10 @@ def get_red_residual_and_jacobian(form, force, _X_goal, constraints=None):
 
     jacobian = compute_jacobian(form, force)
 
+    print('Jacobian:', jacobian)
+    print('Jacobian-shape:', jacobian.shape)
+    print('Jacobian-rank:', np.linalg.matrix_rank(jacobian))
+
     _vcount = force.number_of_vertices()
     _k_i = force.key_index()
     _known = _k_i[force.anchor()]
@@ -285,6 +289,15 @@ def get_red_residual_and_jacobian(form, force, _X_goal, constraints=None):
         (cj, cr) = constraints.compute_constraints()
         jacobian = np.vstack((jacobian, cj))
         r = np.vstack((r, cr))
+        print('Cj:', cj)
+        print('Cr:', cr)
+        print('Jacobian-after:', jacobian)
+        print('Jacobian-shape-after:', jacobian.shape)
+        print('Jacobian-rank-after:', np.linalg.matrix_rank(jacobian))
+
+    print('r:', r)
+    print('r-shape:', r.shape)
+    print('r-rank:', np.linalg.matrix_rank(r))
 
     check_solutions(jacobian, r)
 
