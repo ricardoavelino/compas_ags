@@ -6,15 +6,15 @@ from compas_ags.viewers import Viewer
 from compas_ags.ags import form_update_from_force
 from compas_ags.ags import form_update_q_from_qind
 from compas_ags.ags import force_update_from_form
-# from compas_ags.ags import ConstraintsCollection
-# from compas_ags.ags import form_update_from_force_newton
+from compas_ags.ags import ConstraintsCollection
+from compas_ags.ags import form_update_from_force_newton
 from compas_ags.ags import form_update_from_force
 
 # ------------------------------------------------------------------------------
-#   1. create a simple arch from nodes and edges, make form and force diagrams
+#   1. Adaptation of the truss example to allow newton method -> add horizontal reaction
 # ------------------------------------------------------------------------------
 
-graph = FormGraph.from_obj(compas_ags.get('paper/gs_truss.obj'))
+graph = FormGraph.from_obj(compas_ags.get('paper/gs_truss2.obj'))
 form = FormDiagram.from_graph(graph)
 force = ForceDiagram.from_formdiagram(form)
 
@@ -23,16 +23,16 @@ force = ForceDiagram.from_formdiagram(form)
 # ------------------------------------------------------------------------------
 # prescribe force density to edge
 edges_ind = [
-    (6, 14),
+    (2, 8),
 ]
 for index in edges_ind:
     u, v = index
     form.edge_attribute((u, v), 'is_ind', True)
-    form.edge_attribute((u, v), 'q', +1.)
+    form.edge_attribute((u, v), 'q', -1.)
 
 # set the fixed corners
-left = 5
-right = 1
+left = 0
+right = 6
 fixed = [left, right]
 
 for key in fixed:
@@ -76,18 +76,17 @@ viewer.show()
 # --------------------------------------------------------------------------
 
 # modify the geometry of the force diagram moving nodes further at right to the left
-move_vertices = [6, 7, 8, 9, 10]
+move_vertices = [7, 8, 9, 10, 11]
 translation = +2.0
 for key in move_vertices:
     x0 = force.vertex_attribute(key, 'x')
     force.vertex_attribute(key, 'x', x0 + translation)
 
-form_update_from_force(form, force)
+# set constraints automatically with the form diagram's attributes
+C = ConstraintsCollection(form)
+C.constraints_from_form()
 
-# Solving with newton: Error - missing horizontal reaction.
-# C = ConstraintsCollection(form)
-# C.constraints_from_form()
-# form_update_from_force_newton(form, force, constraints=C)
+form_update_from_force_newton(form, force, constraints=C)
 
 # ------------------------------------------------------------------------------
 #   4. display the orginal configuration
